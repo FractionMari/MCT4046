@@ -7,9 +7,6 @@ gainNode.gain.value = 0.5;
 synth.frequency.value = 440;
 
 
-
-
-
 /// Pixelating code:
 
 // Create new image element.

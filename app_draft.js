@@ -1,51 +1,28 @@
-/* 
-
-var img = new Image();
-
-//img.crossOrigin = 'anonymous';
-img.src = 'assets/rhino.png';
-var canvas = document.getElementById('canvas');
-
-var ctx = canvas.getContext('2d');
-img.onload = imgLoaded;
-
-function imgLoaded() {
-  ctx.drawImage(img, 0, 0);
-  img.style.display = 'none';
-};
-var hoveredColor = document.getElementById('hovered-color');
-var selectedColor = document.getElementById('selected-color');
+window.addEventListener('load', function() {
+  document.querySelector('input[type="file"]').addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+          var image = document.querySelector('img');
 
 
-function pick(event, destination) {
-  var x = event.layerX;
-  var y = event.layerY;
-  var pixel = ctx.getImageData(x, y, 1, 1);
-  var data = pixel.data;
+          
 
-	const rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`;
-	destination.style.background = rgba;
-	destination.textContent = rgba;
 
-	return rgba;
-}
+//ToneJs
 
-canvas.addEventListener('mousemove', function(event) {
-	pick(event, hoveredColor);
-});
-canvas.addEventListener('click', function(event) {
-	pick(event, selectedColor);
-});
- */
-
+const gainNode = new Tone.Gain().toMaster();
+const autoFilter = new Tone.AutoWah().connect(gainNode);
+const synth = new Tone.AMSynth().connect(autoFilter);
+gainNode.gain.value = 0.5;
+synth.frequency.value = 440;
 
 /// Pixelating code:
 
 // Create new image element.
-var image = new Image();
+//var image = new Image();
 
 // Set an image.
-image.src = 'assets/zappa.jpg';
+//image.src = 'assets/zappa.jpg';
+image.src = URL.createObjectURL(this.files[0]); // set src to blob url
 
 // Append image to body.
 document.body.appendChild(image);
@@ -55,7 +32,9 @@ image.onload = imageLoaded;
 
 // Image loaded callback.
 function imageLoaded() {
+  URL.revokeObjectURL(image.src);  // no longer needed, free memory
   // Get the dimensions of loaded image.
+  synth.triggerAttack(); 
   var width = image.clientWidth;
   var height = image.clientHeight;
 
@@ -113,6 +92,8 @@ function imageLoaded() {
       const rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`;
       destination.style.background = rgba;
       destination.textContent = rgba;
+      console.log(data[0]);
+      synth.frequency.value = (data[0]);
   
       return rgba;
   }
@@ -131,3 +112,6 @@ var selectedColor2 = document.getElementById('selected-color');
 
 
 
+}
+});
+});

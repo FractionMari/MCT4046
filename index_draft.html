@@ -12,12 +12,13 @@
 
 
   </head>
+  <script src="https://unpkg.com/tone@13.8.25/build/Tone.js"></script>
   <body>
 
 	<table>
 		<thead>
 			<tr>
-				<th>Source</th>
+				<th>Upload an image (max 600*600 pixels)</th>
 				<th width="150">Hovered color</th>
 				<th width="150">Selected color</th>
 			</tr>
@@ -25,6 +26,8 @@
 		<tbody>
 			<tr>
 				<td>
+					<input type='file' />
+					<br><img id="myImg" src="#">
 					<canvas id="canvas" width="200" height="200"></canvas>
 
 				</td>
