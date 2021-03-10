@@ -4,14 +4,13 @@ window.addEventListener('load', function() {
           var image = document.querySelector('img');
 
 
-          
-
-
+  
 //ToneJs
 
 const gainNode = new Tone.Gain().toMaster();
 const autoFilter = new Tone.AutoWah().connect(gainNode);
 const synth = new Tone.AMSynth().connect(autoFilter);
+const synth2 = new Tone.FMSynth().connect(autoFilter);
 gainNode.gain.value = 0.5;
 synth.frequency.value = 440;
 
@@ -32,9 +31,12 @@ image.onload = imageLoaded;
 
 // Image loaded callback.
 function imageLoaded() {
+
+  synth.triggerAttack(); 
+synth2.triggerAttack(); 
   URL.revokeObjectURL(image.src);  // no longer needed, free memory
   // Get the dimensions of loaded image.
-  synth.triggerAttack(); 
+
   var width = image.clientWidth;
   var height = image.clientHeight;
 
@@ -92,17 +94,37 @@ function imageLoaded() {
       const rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`;
       destination.style.background = rgba;
       destination.textContent = rgba;
-      console.log(data[0]);
+      
       synth.frequency.value = (data[0]);
+      synth2.frequency.value = (data[1]);
+      
   
+      //console.log(typeof(data));
       return rgba;
   }
 
   canvas.addEventListener('mousemove', function(event) {
 	pick2(event, hoveredColor2);
+  yMoveValue = (Math.floor(event.layerY * percent));
+  xMoveValue = (Math.floor(event.layerX * percent));
+  autoFilter.baseFrequency = xMoveValue * 10;
+  //gainValue.gain.value = yMoveValue / 100;
+
+  console.log(yMoveValue / 50);
+
 });
 canvas.addEventListener('click', function(event) {
 	pick2(event, selectedColor2);
+  console.log(Math.floor(event.layerY * percent));
+
+        
+
+
+  //console.log(event.screenY);
+  //console.log(typeof(event));
+  console.log(event);
+  //console.log(event[3]);
+
 });
 }
 
@@ -110,8 +132,26 @@ var hoveredColor2 = document.getElementById('hovered-color');
 var selectedColor2 = document.getElementById('selected-color');
 
 
+document.getElementById("mute").addEventListener("click", function(){
 
+
+if(this.className == 'is-playing'){
+  this.className = "";
+  this.innerHTML = "MUTE: ON"
+  gainNode.gain.rampTo(0, 0.2);
+}else{
+
+  this.className = "is-playing";
+  this.innerHTML = "MUTE: OFF";
+  gainNode.gain.rampTo(0.5, 0.2);
+
+}
+
+
+
+});
 
 }
 });
 });
+
