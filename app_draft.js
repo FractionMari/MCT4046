@@ -97,6 +97,12 @@ synth2.triggerAttack();
       
       synth.frequency.value = (data[0]);
       synth2.frequency.value = (data[1]);
+
+      const highest = Math.max(rgba);
+      const lowest = Math.min(rgba);
+      let lightness = (highest + lowest) / 2 / 255;
+  
+      console.log(lightness);
       
   
       //console.log(typeof(data));
