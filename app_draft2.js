@@ -15,10 +15,10 @@ window.addEventListener('load', function() {
   gainNode.gain.value = 0.5;
   synth.frequency.value = 440;
 
-  Tone.Transport.scheduleRepeat((time) => {
-    // use the callback time to schedule events
-    osc.start(time).stop(time + 0.1);
-  }, "8n");
+  //Tone.Transport.scheduleRepeat((time) => {
+  //  // use the callback time to schedule events
+  //  osc.start(time).stop(time + 0.1);
+  //}, "8n");
 
   
   /// Pixelating code:
@@ -118,7 +118,22 @@ window.addEventListener('load', function() {
         //console.log(highest);
         //console.log(lowest);
         console.log(brightness);
+    //console.log(yMoveValue / 50);
+/*     let index = 0;
 
+    Tone.Transport.scheduleRepeat(repeat, '3n');
+    function repeat(time) {
+      let step = index % 2;
+      for (let i = 0; i < 2; i++) {
+        //let synth = synths[i];
+        if (brightness > 0.4) synth.triggerAttackRelease(pitchValue1, '8n', time);
+        if (brightness > 0.4) synth2.triggerAttackRelease(pitchValue2, '8n', time);
+        if (brightness > 0.4) synth.triggerAttackRelease(pitchValue1, '8n', time + 1);
+        if (brightness > 0.4) synth2.triggerAttackRelease(pitchValue2, '8n', time + 1);
+            
+      }
+      index++;
+    } */
         return rgba;
     }
   
@@ -129,8 +144,7 @@ window.addEventListener('load', function() {
     autoFilter.baseFrequency = xMoveValue * 10;
     //gainValue.gain.value = yMoveValue / 100;
   
-    //console.log(yMoveValue / 50);
-  
+
   });
   canvas.addEventListener('click', function(event) {
       pick2(event, selectedColor2);
@@ -144,7 +158,12 @@ window.addEventListener('load', function() {
     console.log(event);
     //console.log(event[3]);
       // transport must be started before it starts invoking events
+    //Tone.Transport.start();
+
+
     Tone.Transport.start();
+
+
   
   });
   }
