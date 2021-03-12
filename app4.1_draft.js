@@ -1,27 +1,37 @@
+
 // Code that converts 16x16 rgb values to a sequence, mapping rgb values to hertz.
 const synth = new Tone.Synth().toMaster();
 
-
+ 
 
 var rgbValues = "";
-onload = init;
 
-function init() {
+
+    window.addEventListener('load', function() {
+        document.querySelector('input[type="file"]').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var img1 = document.querySelector('img');
     cv = document.querySelector("#cv");
     c = cv.getContext("2d");
     
     pre = document.querySelector("pre")
 
-    img1 = new Image();
+    //img1 = new Image();
     img1.crossOrigin = "Anonymous"; // to bypass cors for imgur image link
     
+    //img1.src = 'assets/colours.jpg';
+    img1.src = URL.createObjectURL(this.files[0]); // set src to blob url
+    
     img1.onload = function() {
+        URL.revokeObjectURL(img1.src);  // no longer needed, free memory
         c.drawImage(img1, 0,0,16,16);
         var idata = c.getImageData(0, 0, 16, 16);
         getPixels(idata);
+        
     };
     
-    img1.src = 'assets/colours.jpg';
+
+    
     
 }   
 
@@ -83,4 +93,9 @@ document.getElementById("play").addEventListener("click", function(){
     
     
     
-    });
+    });// Code that converts 16x16 rgb values to a sequence, mapping rgb values to hertz.
+
+
+
+});
+});
