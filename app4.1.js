@@ -1,10 +1,8 @@
+// This code has an interface for uploading images, downscale them to  a 16x16 pixels image,
+// and then extract the RGB values from all pixels. The RGB values are then mapped to a 
+// frequencies played by a synth through a sequencer.
 
-// Code that converts 16x16 rgb values to a sequence, mapping rgb values to hertz.
 const synth = new Tone.Synth().toMaster();
-
- 
-
-var rgbValues = "";
 
 
     window.addEventListener('load', function() {
@@ -29,9 +27,7 @@ var rgbValues = "";
         getPixels(idata);
         
     };
-    
-
-    
+      
     
 }   
 
@@ -39,7 +35,6 @@ var rgbValues = "";
 function getPixels(imgData) {
     // get colors rgba (4 pix sequentially)
     
-    var saveData 
     var count=1;
     var msg = '';
     for (var i = 0; i < imgData.data.length; i += 4) {
@@ -62,17 +57,9 @@ function getPixels(imgData) {
     
     //console.log(imgData.height);
     //console.log(imgData.data.length);
-
-
     pre.innerText = msg;            
 }
 
-/* // save to txt file function
-function saveStaticDataToFile() {
-                var blob = new Blob([rgbValues],
-                    { type: "text/plain;charset=utf-8" });
-                saveAs(blob, "static.txt");
-            } */
             
 
 // mute button
@@ -90,8 +77,6 @@ document.getElementById("play").addEventListener("click", function(){
         Tone.Transport.stop();
     
     }
-    
-    
     
     });// Code that converts 16x16 rgb values to a sequence, mapping rgb values to hertz.
 
