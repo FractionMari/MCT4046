@@ -1,4 +1,4 @@
-
+// Code that converts 16x16 rgb values to a sequence, mapping rgb values to hertz.
 const synth = new Tone.Synth().toMaster();
 
 
