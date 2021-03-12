@@ -3,7 +3,7 @@
 const gainNode = new Tone.Gain().toMaster();
 const autoFilter = new Tone.AutoWah().connect(gainNode);
 const synth = new Tone.AMSynth().connect(autoFilter);
-gainNode.gain.value = 0.5;
+gainNode.gain.value = 0;
 synth.frequency.value = 440;
 
 
@@ -27,11 +27,15 @@ function imageLoaded() {
   synth.triggerAttack(); 
   var width = image.clientWidth;
   var height = image.clientHeight;
+  console.log(image);
+  console.log(image.clientHeight);
 
   // Create canvas element.
   var canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
+  console.log(width);
+  console.log(image.clientHeight);
 
   // This is what gives us that blocky pixel styling, rather than a blend between pixels.
   canvas.style.cssText = 'image-rendering: optimizeSpeed;' + // FireFox < 6.0
@@ -45,6 +49,7 @@ function imageLoaded() {
 
   // Grab the drawing context object. It's what lets us draw on the canvas.
   var context = canvas.getContext('2d');
+  
 
   // Use nearest-neighbor scaling when images are resized instead of the resizing algorithm to create blur.
   context.webkitImageSmoothingEnabled = false;
@@ -82,7 +87,7 @@ function imageLoaded() {
       const rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`;
       destination.style.background = rgba;
       destination.textContent = rgba;
-      console.log(data[0]);
+      //console.log(data[0]);
       synth.frequency.value = (data[0]);
   
       return rgba;
