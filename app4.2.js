@@ -1,11 +1,11 @@
+// This code has an interface for uploading images, downscale them to  a 16x16 pixels image,
+// and then extract the RGB values from all pixels. The RGB values are then mapped to a 
+// frequencies played by a synth through a sequencer.
+// The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
 
-// Code that converts 16x16 rgb values to a sequence, mapping rgb values to hertz.
-const synth = new Tone.Synth().toMaster();
-
- 
-
-var rgbValues = "";
-
+const synth = new Tone.FMSynth().toMaster();
+const synth2 = new Tone.FMSynth().toMaster();
+const synth3 = new Tone.FMSynth().toMaster();
 
     window.addEventListener('load', function() {
         document.querySelector('input[type="file"]').addEventListener('change', function() {
@@ -15,6 +15,8 @@ var rgbValues = "";
     c = cv.getContext("2d");
     
     pre = document.querySelector("pre")
+    pre2 = document.querySelector("pre2")
+    pre3 = document.querySelector("pre3")
 
     //img1 = new Image();
     img1.crossOrigin = "Anonymous"; // to bypass cors for imgur image link
@@ -24,14 +26,12 @@ var rgbValues = "";
     
     img1.onload = function() {
         URL.revokeObjectURL(img1.src);  // no longer needed, free memory
-        c.drawImage(img1, 0,0,16,16);
-        var idata = c.getImageData(0, 0, 16, 16);
+        c.drawImage(img1, 0,0,16,1);
+        var idata = c.getImageData(0, 0, 16, 1);
         getPixels(idata);
         
     };
-    
-
-    
+      
     
 }   
 
@@ -39,40 +39,68 @@ var rgbValues = "";
 function getPixels(imgData) {
     // get colors rgba (4 pix sequentially)
     
-    var saveData 
     var count=1;
     var msg = '';
+    var rValues = [];
+    var gValues = [];
+    var bValues = [];
     for (var i = 0; i < imgData.data.length; i += 4) {
         msg += "\npixel red " + count + ": " + imgData.data[i];
         msg += "\npixel green " + count + ": " + imgData.data[i+1];
         msg += "\npixel blue " + count + ": " + imgData.data[i+2];
         msg += "\npixel alpha " + count + ": " + imgData.data[i+3] + "\n";
+        rValues += imgData.data[i] + " ";
+        gValues += imgData.data[i+1] + " ";
+        bValues += imgData.data[i+2] + " ";
+        
+        
+
         count++;
+      
         
     }   
     //console.log(imgData.data);
-    
+    //rValues = JSON.parse(rValues);
+
+    // converting rValues to array:
+    rValues = rValues.split(" ");
+    console.log(rValues);
+
     rgbValues = imgData.data;
+    console.log(typeof(rgbValues));
     console.log(rgbValues);
+    // converting gValues to array:
+    gValues = gValues.split(" ");
+    
+    // converting bValues to array:
+    bValues = bValues.split(" ");
+    
 
     const seq = new Tone.Sequence((time, note) => {
         synth.triggerAttackRelease(note, 0.1, time);
+
         // subdivisions are given as subarrays
-    }, rgbValues).start(0);
+    }, rValues).start(0);
+
+    const seq2 = new Tone.Sequence((time, note) => {
+        synth2.triggerAttackRelease(note, 0.1, time);
+
+        // subdivisions are given as subarrays
+    }, gValues).start(0);
+
+    const seq3 = new Tone.Sequence((time, note) => {
+        synth2.triggerAttackRelease(note, 0.1, time);
+
+        // subdivisions are given as subarrays
+    }, bValues).start(0);
     
     //console.log(imgData.height);
     //console.log(imgData.data.length);
-
-
-    pre.innerText = msg;            
+    pre.innerText = ("Red values array: " + rValues);       
+    pre2.innerText = ("Green values array: " + gValues);       
+    pre3.innerText = ("Blue values array: " + bValues);  
 }
 
-/* // save to txt file function
-function saveStaticDataToFile() {
-                var blob = new Blob([rgbValues],
-                    { type: "text/plain;charset=utf-8" });
-                saveAs(blob, "static.txt");
-            } */
             
 
 // mute button
@@ -90,8 +118,6 @@ document.getElementById("play").addEventListener("click", function(){
         Tone.Transport.stop();
     
     }
-    
-    
     
     });// Code that converts 16x16 rgb values to a sequence, mapping rgb values to hertz.
 
