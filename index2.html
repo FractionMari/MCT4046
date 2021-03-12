@@ -18,7 +18,7 @@
 	<table>
 		<thead>
 			<tr>
-				<th>Source</th>
+				<th>Upload an image (max 600*600 pixels)</th>
 				<th width="150">Hovered color</th>
 				<th width="150">Selected color</th>
 			</tr>
@@ -26,7 +26,9 @@
 		<tbody>
 			<tr>
 				<td>
-					<canvas id="canvas" width="200" height="200"></canvas>
+					<input type='file' /> <button id="mute" class="is-playing">MUTE: OFF</button>
+					<br><img id="myImg" src="#">
+					<canvas id="canvas" width="200" height="200" color="hsl(155, 70%, 5%)";></canvas>
 
 				</td>
 				<td align="center" class="color-cell" id="hovered-color"></td>
@@ -37,9 +39,7 @@
 			</tr>
 		</tbody>
 	<table>
-
-        <a href="index2.html">Link to testing page</a>
-		<a href="webAudioCsound/canvas.html">Test cSound webaudio</a>
-	<script src="app.js"></script>
+		
+	<script src="app_draft.js"></script>
   </body>
 </html>

@@ -106,8 +106,8 @@ window.addEventListener('load', function() {
         let pitchValue2 = (data[1]);
         let pitchValue3 = (data[2]);
 
-        const highest = Math.max((data[0]), (data[1]), (data[1]) );
-        const lowest = Math.min((data[0]), (data[1]), (data[1]) );
+        const highest = Math.max((data[0]), (data[1]), (data[2]) );
+        const lowest = Math.min((data[0]), (data[1]), (data[2]) );
         let brightness = (highest + lowest) / 2 / 255;
 
         synth.frequency.value = pitchValue1;
