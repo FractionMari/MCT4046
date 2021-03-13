@@ -1,6 +1,7 @@
 // This code has an interface for uploading images, downscale them to  a 16x16 pixels image,
 // and then extract the RGB values from all pixels. The RGB values are then mapped to a 
 // frequencies played by a synth through a sequencer.
+// The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
 
 const synth = new Tone.FMSynth().toMaster();
 const synth2 = new Tone.FMSynth().toMaster();
@@ -48,28 +49,16 @@ function getPixels(imgData) {
         msg += "\npixel green " + count + ": " + imgData.data[i+1];
         msg += "\npixel blue " + count + ": " + imgData.data[i+2];
         msg += "\npixel alpha " + count + ": " + imgData.data[i+3] + "\n";
-        rValues += (imgData.data[i]/2) + " ";
-        gValues += (imgData.data[i+1]/2) + " ";
-        bValues += (imgData.data[i+2]/2) + " ";
+        rValues += Math.floor(imgData.data[i]/2) + " ";
+        gValues += Math.floor(imgData.data[i+1]/2) + " ";
+        bValues += Math.floor(imgData.data[i+2]/2) + " ";
         
-        
-
-        count++;
-      
-        
+        count++;  
     }   
-    //console.log(imgData.data);
-    //rValues = JSON.parse(rValues);
 
-    // converting rValues to array:
-    //var midiNotes = Tone.Midi(90).toFrequency(); 
+    // Function that converts midi value to frequency:
 
-// Function that converts midi value to frequency:
 
-    function noteToFreq(note) {
-        let a = 440; //frequency of A (coomon value is 440Hz)
-        return (a / 32) * (2 ** ((note - 9) / 12));
-    }
 
     function arrayToFreq(array) {
         let a = 440; //frequency of A (coomon value is 440Hz)
@@ -82,23 +71,24 @@ function getPixels(imgData) {
         }   
         return newArray; 
     }
+    //console.log(imgData.data);
+    //rValues = JSON.parse(rValues);
 
-
-console.log(noteToFreq(60));
+    // converting rValues to array:
     rValues = rValues.split(" ");
-
-    console.log(arrayToFreq(rValues));
-  
-
+    rValues = arrayToFreq(rValues);
+    console.log(rValues);
 
     rgbValues = imgData.data;
-
-    console.log(rValues);
+    //console.log(typeof(rgbValues));
+    //console.log(rgbValues);
     // converting gValues to array:
     gValues = gValues.split(" ");
+    gValues = arrayToFreq(gValues);
     
     // converting bValues to array:
     bValues = bValues.split(" ");
+    bValues = arrayToFreq(bValues);
     
 
     const seq = new Tone.Sequence((time, note) => {
@@ -114,7 +104,7 @@ console.log(noteToFreq(60));
     }, gValues).start(0);
 
     const seq3 = new Tone.Sequence((time, note) => {
-        synth2.triggerAttackRelease(note, 0.1, time);
+        synth3.triggerAttackRelease(note, 0.1, time);
 
         // subdivisions are given as subarrays
     }, bValues).start(0);

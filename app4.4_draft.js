@@ -1,7 +1,6 @@
 // This code has an interface for uploading images, downscale them to  a 16x16 pixels image,
 // and then extract the RGB values from all pixels. The RGB values are then mapped to a 
 // frequencies played by a synth through a sequencer.
-// The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
 
 const synth = new Tone.FMSynth().toMaster();
 const synth2 = new Tone.FMSynth().toMaster();
@@ -49,12 +48,10 @@ function getPixels(imgData) {
         msg += "\npixel green " + count + ": " + imgData.data[i+1];
         msg += "\npixel blue " + count + ": " + imgData.data[i+2];
         msg += "\npixel alpha " + count + ": " + imgData.data[i+3] + "\n";
-        rValues += imgData.data[i] + " ";
-        gValues += imgData.data[i+1] + " ";
-        bValues += imgData.data[i+2] + " ";
+        rValues += Math.floor((imgData.data[i]/3)) + " ";
+        gValues += Math.floor((imgData.data[i+1]/3)) + " ";
+        bValues += Math.floor((imgData.data[i+2]/3)) + " ";
         
-        
-
         count++;
       
         
@@ -63,26 +60,50 @@ function getPixels(imgData) {
     //rValues = JSON.parse(rValues);
 
     // converting rValues to array:
+    //var midiNotes = Tone.Midi(90).toFrequency(); 
+
+// Function that converts midi value to frequency:
+
+
+
+    function arrayToFreq(array) {
+        let a = 440; //frequency of A (coomon value is 440Hz)
+        var newArray = [];
+
+        for (var i = 0; i < array.length; i += 1) {
+
+            newArray.push((a / 32) * (2 ** ((array[i] - 9) / 12)));
+            
+        }   
+        return newArray; 
+    }
+
+
+
     rValues = rValues.split(" ");
+   // rValues = arrayToFreq(rValues);
+    //console.log(arrayToFreq(rValues));
+    //rgbValues = imgData.data;
     console.log(rValues);
 
-    rgbValues = imgData.data;
-    console.log(typeof(rgbValues));
-    console.log(rgbValues);
     // converting gValues to array:
     gValues = gValues.split(" ");
+    //gValues = arrayToFreq(gValues);
+    console.log(gValues);
     
     // converting bValues to array:
     bValues = bValues.split(" ");
+    //bValues = arrayToFreq(bValues);
+    console.log(bValues);
     
 
     const seq = new Tone.Sequence((time, note) => {
         synth.triggerAttackRelease(note, 0.1, time);
-
+it
         // subdivisions are given as subarrays
     }, rValues).start(0);
 
-    const seq2 = new Tone.Sequence((time, note) => {
+/*     const seq2 = new Tone.Sequence((time, note) => {
         synth2.triggerAttackRelease(note, 0.1, time);
 
         // subdivisions are given as subarrays
@@ -92,7 +113,7 @@ function getPixels(imgData) {
         synth3.triggerAttackRelease(note, 0.1, time);
 
         // subdivisions are given as subarrays
-    }, bValues).start(0);
+    }, bValues).start(0); */
     
     //console.log(imgData.height);
     //console.log(imgData.data.length);
