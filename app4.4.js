@@ -1,6 +1,7 @@
 // This code has an interface for uploading images, downscale them to  a 16x16 pixels image,
 // and then extract the RGB values from all pixels. The RGB values are then mapped to a 
 // frequencies played by a synth through a sequencer.
+// The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
 
 const synth = new Tone.FMSynth().toMaster();
 const synth2 = new Tone.FMSynth().toMaster();
@@ -24,10 +25,64 @@ const synth3 = new Tone.FMSynth().toMaster();
     img1.src = URL.createObjectURL(this.files[0]); // set src to blob url
     
     img1.onload = function() {
+
+        var scaledWidth = 16;
+        var scaledHeight = 1;
+
         URL.revokeObjectURL(img1.src);  // no longer needed, free memory
-        c.drawImage(img1, 0,0,16,1);
-        var idata = c.getImageData(0, 0, 16, 1);
+        c.drawImage(img1, 0,0,scaledWidth, scaledHeight);
+        var idata = c.getImageData(0, 0, scaledWidth, scaledHeight);
         getPixels(idata);
+
+
+
+        //// code for pixelating 
+
+        var width = scaledWidth * 50;
+        var height = scaledHeight * 50;
+
+      
+        // Create canvas element.
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+      
+        // This is what gives us that blocky pixel styling, rather than a blend between pixels.
+        canvas.style.cssText = 'image-rendering: optimizeSpeed;' + // FireFox < 6.0
+                               'image-rendering: -moz-crisp-edges;' + // FireFox
+                               'image-rendering: -o-crisp-edges;' +  // Opera
+                               'image-rendering: -webkit-crisp-edges;' + // Chrome
+                               'image-rendering: crisp-edges;' + // Chrome
+                               'image-rendering: -webkit-optimize-contrast;' + // Safari
+                               'image-rendering: pixelated; ' + // Future browsers
+                               '-ms-interpolation-mode: nearest-neighbor;'; // IE
+      
+        // Grab the drawing context object. It's what lets us draw on the canvas.
+        var context = canvas.getContext('2d');
+      
+        // Use nearest-neighbor scaling when images are resized instead of the resizing algorithm to create blur.
+        context.webkitImageSmoothingEnabled = false;
+        context.mozImageSmoothingEnabled = false;
+        context.msImageSmoothingEnabled = false;
+        context.imageSmoothingEnabled = false;
+      
+        // We'll be pixelating the image by 80% (20% of original size).
+        //var percent = 0.05;
+      
+        // Calculate the scaled dimensions.
+
+      
+        // Render image smaller.
+        context.drawImage(img1, 0, 0, scaledWidth, scaledHeight);
+      
+        // Stretch the smaller image onto larger context.
+        context.drawImage(canvas, 0, 0, scaledWidth, scaledHeight, 0, 0, width, height);
+      
+        // Here are what the above parameters mean:
+        // canvasElement, canvasXOffsetForImage, canvasYOffsetForImage, imageWidth, imageHeight, imageXOffset, imageYOffset, destinationImageWidth, destinationImageHeight
+      
+        // Append canvas to body.
+        document.body.appendChild(canvas);
         
     };
       
@@ -48,21 +103,14 @@ function getPixels(imgData) {
         msg += "\npixel green " + count + ": " + imgData.data[i+1];
         msg += "\npixel blue " + count + ": " + imgData.data[i+2];
         msg += "\npixel alpha " + count + ": " + imgData.data[i+3] + "\n";
-        rValues += Math.floor((imgData.data[i]/3)) + " ";
-        gValues += Math.floor((imgData.data[i+1]/3)) + " ";
-        bValues += Math.floor((imgData.data[i+2]/3)) + " ";
+        rValues += Math.floor(imgData.data[i]/2) + " ";
+        gValues += Math.floor(imgData.data[i+1]/2) + " ";
+        bValues += Math.floor(imgData.data[i+2]/2) + " ";
         
-        count++;
-      
-        
+        count++;  
     }   
-    //console.log(imgData.data);
-    //rValues = JSON.parse(rValues);
 
-    // converting rValues to array:
-    //var midiNotes = Tone.Midi(90).toFrequency(); 
-
-// Function that converts midi value to frequency:
+    // Function that converts midi value to frequency:
 
 
 
@@ -77,33 +125,33 @@ function getPixels(imgData) {
         }   
         return newArray; 
     }
+    //console.log(imgData.data);
+    //rValues = JSON.parse(rValues);
 
-
-
+    // converting rValues to array:
     rValues = rValues.split(" ");
-   // rValues = arrayToFreq(rValues);
-    //console.log(arrayToFreq(rValues));
-    //rgbValues = imgData.data;
+    rValues = arrayToFreq(rValues);
     console.log(rValues);
 
+    rgbValues = imgData.data;
+    //console.log(typeof(rgbValues));
+    //console.log(rgbValues);
     // converting gValues to array:
     gValues = gValues.split(" ");
-    //gValues = arrayToFreq(gValues);
-    console.log(gValues);
+    gValues = arrayToFreq(gValues);
     
     // converting bValues to array:
     bValues = bValues.split(" ");
-    //bValues = arrayToFreq(bValues);
-    console.log(bValues);
+    bValues = arrayToFreq(bValues);
     
 
     const seq = new Tone.Sequence((time, note) => {
         synth.triggerAttackRelease(note, 0.1, time);
-it
+
         // subdivisions are given as subarrays
     }, rValues).start(0);
 
-/*     const seq2 = new Tone.Sequence((time, note) => {
+    const seq2 = new Tone.Sequence((time, note) => {
         synth2.triggerAttackRelease(note, 0.1, time);
 
         // subdivisions are given as subarrays
@@ -113,7 +161,7 @@ it
         synth3.triggerAttackRelease(note, 0.1, time);
 
         // subdivisions are given as subarrays
-    }, bValues).start(0); */
+    }, bValues).start(0);
     
     //console.log(imgData.height);
     //console.log(imgData.data.length);

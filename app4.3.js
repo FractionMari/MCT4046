@@ -2,6 +2,7 @@
 // and then extract the RGB values from all pixels. The RGB values are then mapped to a 
 // frequencies played by a synth through a sequencer.
 // The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
+// The RGB values are divided by 2 and converted from MIDI note values to Frequencies.
 
 const synth = new Tone.FMSynth().toMaster();
 const synth2 = new Tone.FMSynth().toMaster();
