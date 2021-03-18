@@ -6,7 +6,9 @@
 const synth = new Tone.FMSynth().toMaster();
 const synth2 = new Tone.FMSynth().toMaster();
 const synth3 = new Tone.FMSynth().toMaster();
- 
+
+
+
     window.addEventListener('load', function() {
         document.querySelector('input[type="file"]').addEventListener('change', function() {
             if (this.files && this.files[0]) {
@@ -14,7 +16,7 @@ const synth3 = new Tone.FMSynth().toMaster();
     cv = document.querySelector("#cv");
     c = cv.getContext("2d");
     
-    pre = document.querySelector("pre")
+    pre1 = document.querySelector("pre1")
     pre2 = document.querySelector("pre2")
     pre3 = document.querySelector("pre3")
 
@@ -26,15 +28,12 @@ const synth3 = new Tone.FMSynth().toMaster();
     
     img1.onload = function() {
 
-        var scaledWidth = 16;
-        var scaledHeight = 16;
+
 
         URL.revokeObjectURL(img1.src);  // no longer needed, free memory
         c.drawImage(img1, 0,0,scaledWidth, scaledHeight);
         var idata = c.getImageData(0, 0, scaledWidth, scaledHeight);
         getPixels(idata);
-
-
 
         //// code for pixelating 
 
@@ -65,11 +64,6 @@ const synth3 = new Tone.FMSynth().toMaster();
         context.mozImageSmoothingEnabled = false;
         context.msImageSmoothingEnabled = false;
         context.imageSmoothingEnabled = false;
-      
-        // We'll be pixelating the image by 80% (20% of original size).
-        //var percent = 0.05;
-      
-        // Calculate the scaled dimensions.
 
       
         // Render image smaller.
@@ -98,6 +92,11 @@ function getPixels(imgData) {
     var rValues = [];
     var gValues = [];
     var bValues = [];
+    var highest = [];
+    var lowest = [];
+    var brightnessArray = [];
+    let brightness = [];
+    let brightness2 = [];
     for (var i = 0; i < imgData.data.length; i += 4) {
         msg += "\npixel red " + count + ": " + imgData.data[i];
         msg += "\npixel green " + count + ": " + imgData.data[i+1];
@@ -106,12 +105,19 @@ function getPixels(imgData) {
         rValues += Math.floor(imgData.data[i]/2) + " ";
         gValues += Math.floor(imgData.data[i+1]/2) + " ";
         bValues += Math.floor(imgData.data[i+2]/2) + " ";
+
+// Getting brightness values of pixels:
+        highest = Math.max((imgData.data[i]), (imgData.data[i+1]), (imgData.data[i+2]) );
+        lowest = Math.min((imgData.data[i]), (imgData.data[i+1]), (imgData.data[i+2]) );
+        //brightness += ((highest + lowest) / 2 / 255) + " ";
+        brightness += Math.floor(((highest + lowest) / 2 / 255) * 50) + " ";
+        brightness2 += Math.floor(((highest + lowest) / 2 / 255) * 100) + " ";
         
+    
         count++;  
     }   
 
     // Function that converts midi value to frequency:
-
 
 
     function arrayToFreq(array) {
@@ -125,47 +131,118 @@ function getPixels(imgData) {
         }   
         return newArray; 
     }
-    //console.log(imgData.data);
-    //rValues = JSON.parse(rValues);
 
+
+
+    // converting brightnessvalue to array:
+    brightness = brightness.split(" ");
+    brightness.pop();
+    brightness = arrayToFreq(brightness);
+   // console.log(brightness);
     // converting rValues to array:
+
+    brightness2 = brightness2.split(" ");
+    brightness2.pop();
+    brightness2 = arrayToFreq(brightness2);
+    //console.log(brightness2);
+    // converting rValues to array:
+    
+    
     rValues = rValues.split(" ");
+    rValues.pop();
     rValues = arrayToFreq(rValues);
+    //console.log(rValues);
     console.log(rValues);
 
+    // Function for getting out separate values for each line
+    let rValuesLine1; 
+    let rValuesLine2; 
+    let rValuesLine3; 
+    let rValuesLine4; 
+    let rValuesLine5; 
+    let rValuesLine6; 
+    let rValuesLine7; 
+    let rValuesLine8; 
+    let rValuesLine9; 
+    let rValuesLine10; 
+    let rValuesLine11; 
+    let rValuesLine12;
+    let rValuesLine13; 
+    let rValuesLine14; 
+    let rValuesLine15; 
+    let rValuesLine16;  
+
+    for (var i = 0; i < scaledWidth; i += 1 ) {
+rValuesLine1 += rValues[i] + " ";
+rValuesLine2 += rValues[i + scaledWidth * 1] + " ";
+rValuesLine3 += rValues[i + scaledWidth * 2] + " ";
+rValuesLine4 += rValues[i + scaledWidth * 3] + " ";
+rValuesLine5 += rValues[i + scaledWidth * 4] + " ";
+rValuesLine6 += rValues[i + scaledWidth * 5] + " ";
+rValuesLine7 += rValues[i + scaledWidth * 6] + " ";
+rValuesLine8 += rValues[i + scaledWidth * 7] + " ";
+rValuesLine9 += rValues[i + scaledWidth * 8] + " ";
+rValuesLine10 += rValues[i + scaledWidth * 9] + " ";
+rValuesLine11 += rValues[i + scaledWidth * 10] + " ";
+rValuesLine12 += rValues[i + scaledWidth * 11] + " ";
+rValuesLine13 += rValues[i + scaledWidth * 12] + " ";
+rValuesLine14 += rValues[i + scaledWidth * 13] + " ";
+rValuesLine15 += rValues[i + scaledWidth * 14] + " ";
+rValuesLine16 += rValues[i + scaledWidth * 15] + " ";
+
+    };
+    console.log(rValuesLine1);    
+    console.log(rValuesLine2);
+    console.log(rValuesLine3);
+    console.log(rValuesLine4);
+    console.log(rValuesLine5);
+    console.log(rValuesLine6);
+    console.log(rValuesLine7);
+    console.log(rValuesLine8);
+    console.log(rValuesLine9);
+    console.log(rValuesLine10);
+    console.log(rValuesLine12);
+    console.log(rValuesLine13);
+    console.log(rValuesLine14);
+    console.log(rValuesLine15);
+    console.log(rValuesLine16);
+
+    
     rgbValues = imgData.data;
     //console.log(typeof(rgbValues));
     //console.log(rgbValues);
     // converting gValues to array:
     gValues = gValues.split(" ");
+    gValues.pop();
     gValues = arrayToFreq(gValues);
     
     // converting bValues to array:
     bValues = bValues.split(" ");
+    bValues.pop();
     bValues = arrayToFreq(bValues);
     
 
     const seq = new Tone.Sequence((time, note) => {
-        synth.triggerAttackRelease(note, 0.1, time);
+        synth.triggerAttackRelease(note, 0.2, time);
 
         // subdivisions are given as subarrays
-    }, rValues).start(0);
+    }, brightness).start(0);
 
     const seq2 = new Tone.Sequence((time, note) => {
-        synth2.triggerAttackRelease(note, 0.1, time);
+        synth2.triggerAttackRelease(note, 0.2, time);
 
         // subdivisions are given as subarrays
-    }, gValues).start(0);
+    }, brightness2 ).start(0);
 
     const seq3 = new Tone.Sequence((time, note) => {
-        synth3.triggerAttackRelease(note, 0.1, time);
+        synth3.triggerAttackRelease(note, 0.2, time);
 
         // subdivisions are given as subarrays
-    }, bValues).start(0);
+    }, brightness).start(1);
     
     //console.log(imgData.height);
     //console.log(imgData.data.length);
-    pre.innerText = ("Red values array: " + rValues);       
+    pre1.innerText = ("Red values array: " + rValues);       
     pre2.innerText = ("Green values array: " + gValues);       
     pre3.innerText = ("Blue values array: " + bValues);  
 }

@@ -4,6 +4,7 @@ canvas {
 	width: 1600px;
 	height: 100px;
   image-rendering: pixelated;
+  background-color: r;
 
 }
 
