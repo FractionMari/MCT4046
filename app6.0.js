@@ -6,9 +6,7 @@
 // frequencies played by a synth through a sequencer.
 // The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
 
-function clamp(min, max, val) {
-    return Math.min(Math.max(min, +val), max);
-  }
+
 //Scaling any incoming number
 function generateScaleFunction(prevMin, prevMax, newMin, newMax) {
     var offset = newMin - prevMin,
@@ -18,7 +16,7 @@ function generateScaleFunction(prevMin, prevMax, newMin, newMax) {
         };
     };
 
-let normalize = generateScaleFunction(-1, 1, 0, 1);   
+let normalize = generateScaleFunction(-0.5, 1, 0, 1);   
 
 
 // Sequencer code:
@@ -198,7 +196,7 @@ function getPixels(imgData) {
 
 
         warmColours += normalize((imgData.data[i] - imgData.data[i+2]) / 255) + " ";
-        warmColours += (clamp(0, 1, warmColours));
+        
 
 // Getting brightness values of pixels:
         highest = Math.max((imgData.data[i]), (imgData.data[i+1]), (imgData.data[i+2]) );

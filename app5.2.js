@@ -1,21 +1,6 @@
-// her er koden beholdt med sampler-koden.
+// This is the code for Image pixel sequencer.
 
-// This code has an interface for uploading images, downscale them to  a 16x16 pixels image,
-// and then extract the RGB values from all pixels. The RGB values are then mapped to a 
-// frequencies played by a synth through a sequencer.
-// The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
-//Scaling any incoming number
-function generateScaleFunction(prevMin, prevMax, newMin, newMax) {
-    var offset = newMin - prevMin,
-        scale = (newMax - newMin) / (prevMax - prevMin);
-    return function (x) {
-        return offset + scale * x;
-        };
-    };
-
-let normalize = generateScaleFunction(-0.5, 1, 0, 1);   
-// Sequencer code:
-
+// Sequencer code borrowed from Tone.js examples https://tonejs.github.io/examples/stepSequencer:
 const keys = new Tone.Players({
     urls: {
         0: "A1.mp3",
@@ -35,6 +20,7 @@ document.querySelector("tone-step-sequencer").addEventListener("trigger", ({ det
 });
 
 ////////
+
 //Gain and effects:
 
 //Gain:
@@ -52,7 +38,14 @@ let gainNode7 = new Tone.Gain().connect(gainNode);
 let gainNode8 = new Tone.Gain().connect(gainNode);
 let gainNode9 = new Tone.Gain().connect(gainNode);
 let gainNode10 = new Tone.Gain().connect(gainNode);
-const autoFilter = new Tone.AutoFilter("4n").connect(gainNode1);
+let gainNode11 = new Tone.Gain().connect(gainNode);
+let gainNode12 = new Tone.Gain().connect(gainNode);
+let gainNode13 = new Tone.Gain().connect(gainNode);
+let gainNode14 = new Tone.Gain().connect(gainNode);
+let gainNode15 = new Tone.Gain().connect(gainNode);
+let gainNode16 = new Tone.Gain().connect(gainNode);
+
+
 // Individual filters
 const autoFilter1 = new Tone.AutoFilter("4n").connect(gainNode1);
 autoFilter1.type = "square3";
@@ -64,106 +57,56 @@ const autoFilter4 = new Tone.AutoFilter("4n").connect(gainNode4);
 autoFilter4.type = "square6";
 const autoFilter5 = new Tone.AutoFilter("4n").connect(gainNode5);
 autoFilter5.type = "square7";
+const autoFilter6 = new Tone.AutoFilter("4n").connect(gainNode6);
+autoFilter6.type = "square7";
+const autoFilter7 = new Tone.AutoFilter("4n").connect(gainNode7);
+autoFilter7.type = "square7";
+const autoFilter8 = new Tone.AutoFilter("4n").connect(gainNode8);
+autoFilter8.type = "square7";
+const autoFilter9 = new Tone.AutoFilter("4n").connect(gainNode9);
+autoFilter9.type = "square7";
+const autoFilter10 = new Tone.AutoFilter("4n").connect(gainNode10);
+autoFilter10.type = "square7";
+const autoFilter11 = new Tone.AutoFilter("4n").connect(gainNode11);
+autoFilter11.type = "square7";
+const autoFilter12 = new Tone.AutoFilter("4n").connect(gainNode12);
+autoFilter12.type = "square7";
+const autoFilter13 = new Tone.AutoFilter("4n").connect(gainNode13);
+autoFilter13.type = "square7";
+const autoFilter14 = new Tone.AutoFilter("4n").connect(gainNode14);
+autoFilter14.type = "square7";
+const autoFilter15 = new Tone.AutoFilter("4n").connect(gainNode15);
+autoFilter15.type = "square7";
+const autoFilter16 = new Tone.AutoFilter("4n").connect(gainNode16);
+autoFilter16.type = "square7";
 
-const feedbackDelay6 = new Tone.FeedbackDelay("8n", 0.5).connect(gainNode6);
+
+
+//Individual FeedbackDelay
 const feedbackDelay7 = new Tone.FeedbackDelay("8n", 0.5).connect(gainNode7);
 const feedbackDelay8 = new Tone.FeedbackDelay("8n", 0.5).connect(gainNode8);
 const feedbackDelay9 = new Tone.FeedbackDelay("8n", 0.5).connect(gainNode9);
+const feedbackDelay10 = new Tone.FeedbackDelay("8n", 0.5).connect(gainNode10);
 
+// synth1 - 6 autoFilter, synth 7-10 feedbackDelay, synth 11-16 autoFilter + automated sustain
+const synth = new Tone.AMSynth().connect(autoFilter1);
+const synth2 = new Tone.FMSynth().connect(autoFilter2);
+const synth3 = new Tone.AMSynth().connect(autoFilter3);
+const synth4 = new Tone.FMSynth().connect(autoFilter4);
+const synth5 = new Tone.AMSynth().connect(autoFilter5);
+const synth6 = new Tone.FMSynth().connect(autoFilter6);
+const synth7 = new Tone.AMSynth().connect(feedbackDelay7);
+const synth8 = new Tone.FMSynth().connect(feedbackDelay8);
+const synth9 = new Tone.AMSynth().connect(feedbackDelay9);
+const synth10 = new Tone.FMSynth().connect(feedbackDelay10);
+const synth11 = new Tone.AMSynth().connect(autoFilter11);
+const synth12 = new Tone.FMSynth().connect(autoFilter12);
+const synth13 = new Tone.AMSynth().connect(autoFilter13);
+const synth14 = new Tone.FMSynth().connect(autoFilter14);
+const synth15 = new Tone.AMSynth().connect(autoFilter15);
+const synth16 = new Tone.FMSynth().connect(autoFilter16);
 
-
-
-
-/* //samplers:
-const synth2 = new Tone.Sampler({
-	urls: {
-		A1: "A1.mp3",
-		A2: "A2.mp3",
-	},
-	baseUrl: "https://tonejs.github.io/audio/casio/",
-
-}).toMaster();
-const synth4 = new Tone.Sampler({
-	urls: {
-		G1: "005.wav",
-	},
-	baseUrl: "/samples/",
-
-}).connect(autoFilter);
-
-const synth6 = new Tone.Sampler({
-	urls: {
-		A1: "A1.mp3",
-		A2: "A2.mp3",
-	},
-	baseUrl: "https://tonejs.github.io/audio/casio/",
-
-}).connect(autoFilter);
-
-const synth8 = new Tone.Sampler({
-	urls: {
-		G1: "005.wav",
-	},
-	baseUrl: "/samples/",
-
-}).connect(autoFilter);
-
-const synth10 = new Tone.Sampler({
-	urls: {
-		A1: "A1.mp3",
-		A2: "A2.mp3",
-	},
-	baseUrl: "https://tonejs.github.io/audio/casio/",
-
-}).connect(autoFilter);
-
-const synth12 = new Tone.Sampler({
-	urls: {
-		G1: "005.wav",
-	},
-	baseUrl: "/samples/",
-
-}).connect(autoFilter);
-
-const synth14 = new Tone.Sampler({
-	urls: {
-		C1: "hh.mp3",
-	},
-	baseUrl: "/samples/",
-
-}).connect(autoFilter);
-
-const synth16 = new Tone.Sampler({
-	urls: {
-		C1: "kick.mp3",
-	},
-	baseUrl: "/samples/",
-
-}).connect(autoFilter); */
-
-//synths:
-
-
-
-const synth = new Tone.FMSynth().connect(autoFilter1);
-const synth3 = new Tone.FMSynth().connect(autoFilter2);
-const synth5 = new Tone.FMSynth().connect(autoFilter3);
-const synth7 = new Tone.FMSynth().connect(autoFilter4);
-const synth9 = new Tone.FMSynth().connect(autoFilter);
-const synth11 = new Tone.FMSynth().connect(autoFilter);
-const synth13 = new Tone.AMSynth().connect(autoFilter);
-const synth15 = new Tone.AMSynth().connect(autoFilter);
-
-const synth2 = new Tone.FMSynth().connect(autoFilter);
-const synth4 = new Tone.FMSynth().connect(autoFilter);
-const synth6 = new Tone.FMSynth().connect(autoFilter);
-const synth8 = new Tone.FMSynth().connect(autoFilter);
-const synth10 = new Tone.FMSynth().connect(autoFilter);
-const synth12 = new Tone.FMSynth().connect(autoFilter);
-const synth14 = new Tone.AMSynth().connect(autoFilter);
-const synth16 = new Tone.AMSynth().connect(autoFilter);
-
-
+// 16 brightness arrays
 let brightness = [];
 let brightness2 = [];
 let brightness3 = [];
@@ -180,7 +123,6 @@ let brightness13 = [];
 let brightness14 = [];
 let brightness15 = [];
 let brightness16 = [];
-
 
 // function for loading an image
     window.addEventListener('load', function() {
@@ -256,7 +198,7 @@ let brightness16 = [];
     
 }   
 
-
+// Function for getting pixels:
 function getPixels(imgData) {
     // get colors rgba (4 pix sequentially)
     
@@ -286,7 +228,6 @@ function getPixels(imgData) {
         brightness += ((highest + lowest) / 2 / 255) + " ";
 
         warmColours += normalize((imgData.data[i] - imgData.data[i+2]) / 255) + " ";
-      
     
         count++;  
     }   
@@ -334,7 +275,7 @@ function arrayToFreq(array) {
 }
 
 
-// til i morgen: se om jeg kan ta hele greia inn i én funksjon.
+// array that slices the 16x16 array up in 16 different separate arrays
 function sliceAndMultiply(multiplyValue, array) {
 
     var number1 = scaledWidth * multiplyValue;
@@ -356,8 +297,9 @@ function onOffValues(array, midivalue) {
    }
    return onOffValue;
 };
-console.log(sensiScale);
 
+
+// slicing the 16x16 array up ti 16 different separate arrays
 brightness1 = sliceAndMultiply(0, brightness);
 brightness2 = sliceAndMultiply(1, brightness);
 brightness3 = sliceAndMultiply(2, brightness);
@@ -375,7 +317,7 @@ brightness14 = sliceAndMultiply(13, brightness);
 brightness15 = sliceAndMultiply(14, brightness);
 brightness16 = sliceAndMultiply(15, brightness);
 
-
+// converting the arrays to arrays determing on and off of midi values
 let Arraybrightness1 = onOffValues(brightness1, 72);
 let Arraybrightness2 = onOffValues(brightness2, 71);
 let Arraybrightness3 = onOffValues(brightness3, 69);
@@ -393,7 +335,7 @@ let Arraybrightness14 = onOffValues(brightness14, 50);
 let Arraybrightness15 = onOffValues(brightness15, 48);
 let Arraybrightness16 = onOffValues(brightness16, 47);
 
-
+// converting brightness arrays to frequencies
 Arraybrightness1 = arrayToFreq(Arraybrightness1);
 Arraybrightness2 = arrayToFreq(Arraybrightness2);
 Arraybrightness3 = arrayToFreq(Arraybrightness3);
@@ -412,23 +354,17 @@ Arraybrightness15 = arrayToFreq(Arraybrightness15);
 Arraybrightness16 = arrayToFreq(Arraybrightness16);
     
 
-
+// Functions for the 16 different sequences:
 
 const seq = new Tone.Sequence((time, note) => {
     synth.triggerAttackRelease(note, sustain, time);
     var time2 = time * 4;
-    //console.log(time2);
     
     var i = Math.floor(time2 % brightness1.length);
 
-    //console.log(time);
-    //console.log(i);
     gainNode1.gain.rampTo(brightness1[i], 0.2);
     autoFilter1.wet.value = warmColours1[i];
-    //gainNode.gain.value = row3[i];
-    //console.log(autoFilter.wet.value);
-    //console.log(gainNode.gain.value);
-    // subdivisions are given as subarrays
+
 }, Arraybrightness1).start(0);
 
 const seq2 = new Tone.Sequence((time, note) => {
@@ -482,20 +418,20 @@ const seq5 = new Tone.Sequence((time, note) => {
 }, Arraybrightness5).start(0);
 
 const seq6 = new Tone.Sequence((time, note) => {
-    synth6.triggerAttackRelease(note, 0.1, time);
+    synth6.triggerAttackRelease(note, sustain, time);
     var time2 = time * 4;
     
     var i = Math.floor(time2 % brightness6.length);
     
     gainNode6.gain.rampTo(brightness6[i], 0.2);
-    feedbackDelay6.wet.value = warmColours6[i];
+    autoFilter5.wet.value = warmColours6[i];
 
 
     // subdivisions are given as subarrays
 }, Arraybrightness6).start(0);
 
 const seq7 = new Tone.Sequence((time, note) => {
-    synth7.triggerAttackRelease(note, 0.1, time);
+    synth7.triggerAttackRelease(note, sustain, time);
     var time2 = time * 4;
     
     var i = Math.floor(time2 % brightness7.length);
@@ -507,7 +443,7 @@ const seq7 = new Tone.Sequence((time, note) => {
 }, Arraybrightness7).start(0);
 
 const seq8 = new Tone.Sequence((time, note) => {
-    synth8.triggerAttackRelease(note, 0.2, time);
+    synth8.triggerAttackRelease(note, sustain, time);
     var time2 = time * 4;
     
     var i = Math.floor(time2 % brightness8.length);
@@ -519,28 +455,32 @@ const seq8 = new Tone.Sequence((time, note) => {
 }, Arraybrightness8).start(0);
 
 const seq9 = new Tone.Sequence((time, note) => {
+    synth9.triggerAttackRelease(note, sustain, time);
     var time2 = time * 4;
     
     var i = Math.floor(time2 % brightness9.length);
     
     gainNode9.gain.rampTo(brightness9[i], 0.2);
+    feedbackDelay9.wet.value = warmColours9[i];
 
 
-    synth9.triggerAttackRelease(note, brightness9[i], time);
+    //synth9.triggerAttackRelease(note, brightness9[i], time);
 
     // subdivisions are given as subarrays
 }, Arraybrightness9).start(0);
 
 const seq10 = new Tone.Sequence((time, note) => {
+    synth10.triggerAttackRelease(note, sustain, time);
     var time2 = time * 4;
     
     var i = Math.floor(time2 % brightness10.length);
     
     gainNode10.gain.rampTo(brightness10[i], 0.2);
+    feedbackDelay10.wet.value = warmColours10[i];
 
 
 
-    synth10.triggerAttackRelease(note, brightness10[i], time);
+    //synth10.triggerAttackRelease(note, brightness10[i], time);
 
     // subdivisions are given as subarrays
 }, Arraybrightness10).start(0);
@@ -559,43 +499,81 @@ const seq11 = new Tone.Sequence((time, note) => {
 }, Arraybrightness11).start(0);
 
 const seq12 = new Tone.Sequence((time, note) => {
-    synth12.triggerAttackRelease(note, 0.2, time);
+    var time2 = time * 4;
+    
+    var i = Math.floor(time2 % brightness12.length);
+    
+    gainNode12.gain.rampTo(brightness12[i], 0.2);
+
+    synth11.triggerAttackRelease(note, brightness12[i], time);
 
     // subdivisions are given as subarrays
 }, Arraybrightness12).start(0);
 
 const seq13 = new Tone.Sequence((time, note) => {
-    synth13.triggerAttackRelease(note, 0.2, time);
+    var time2 = time * 4;
+    
+    var i = Math.floor(time2 % brightness13.length);
+    
+    gainNode13.gain.rampTo(brightness13[i], 0.2);
+
+    synth11.triggerAttackRelease(note, brightness13[i], time);
 
     // subdivisions are given as subarrays
 }, Arraybrightness13).start(0);
 
 const seq14 = new Tone.Sequence((time, note) => {
-    synth14.triggerAttackRelease(note, 0.2, time);
+    var time2 = time * 4;
+    
+    var i = Math.floor(time2 % brightness14.length);
+    
+    gainNode14.gain.rampTo(brightness14[i], 0.2);
+
+    synth11.triggerAttackRelease(note, brightness14[i], time);
 
     // subdivisions are given as subarrays
 }, Arraybrightness14).start(0);
 
 const seq15 = new Tone.Sequence((time, note) => {
-    synth15.triggerAttackRelease(note, 0.2, time);
+    var time2 = time * 4;
+    
+    var i = Math.floor(time2 % brightness15.length);
+    
+    gainNode15.gain.rampTo(brightness15[i], 0.2);
+
+    synth11.triggerAttackRelease(note, brightness15[i], time);
 
     // subdivisions are given as subarrays
 }, Arraybrightness15).start(0);
 
 const seq16 = new Tone.Sequence((time, note) => {
-    synth16.triggerAttackRelease(note, 0.2, time);
+    var time2 = time * 4;
+    
+    var i = Math.floor(time2 % brightness16.length);
+    
+    gainNode16.gain.rampTo(brightness16[i], 0.2);
+
+    synth11.triggerAttackRelease(note, brightness16[i], time);
 
     // subdivisions are given as subarrays
 }, Arraybrightness16).start(0);
     
-    //console.log(imgData.height);
-    //console.log(imgData.data.length);
-/*     pre1.innerText = ("Red values array: " + rValues);       
-    pre2.innerText = ("Green values array: " + gValues);       
-    pre3.innerText = ("Blue values array: " + bValues);   */
+
 }
 
             
 
 });
 });
+
+
+//Function for scaling any incoming number
+function generateScaleFunction(prevMin, prevMax, newMin, newMax) {
+    var offset = newMin - prevMin,
+        scale = (newMax - newMin) / (prevMax - prevMin);
+    return function (x) {
+        return offset + scale * x;
+        };
+    };
+
+let normalize = generateScaleFunction(-0.5, 1, 0, 1);   
