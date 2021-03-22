@@ -13,7 +13,7 @@
         <script src="https://tonejs.github.io/examples/js/tone-ui.js"></script>
         <script src="https://tonejs.github.io/examples/js/components.js"></script>
 
-
+<H1>The amazing image sequencer!</H1>
         <tone-example label="Step Sequencer">
             <p>Horisontal dimentions:</p>
             <div class="range-wrap">
@@ -33,19 +33,6 @@
          <output class="bubble"></output>
       </div>
 
-      <p>Sustain</p>
-      <div class="range-wrap">
-      <input type="range" min="0.01" max="0.3" value="0.10" step="0.01" class="range" id="sustain"> 
-      <output class="bubble"></output>
-   </div>
-
-   <p>Volume</p>
-   <div class="range-wrap">
-   <input type="range" min="0" max="0.9" value="0.10" step="0.1" class="range" id="volume"> 
-   <output class="bubble"></output>
-</div>
-
-  
 
             <br><br><input id="button" type='file' />
              
@@ -59,6 +46,19 @@
                 <tone-play-toggle></tone-play-toggle>
                 <tone-slider label="tempo" units="bpm" min="60" max="240" value="120"></tone-slider>
                 
+      <p>Sustain</p>
+      <div class="range-wrap">
+      <input type="range" min="0.01" max="0.3" value="0.10" step="0.01" class="range" id="sustain"> 
+      <output class="bubble"></output>
+   </div>
+
+   <p>Volume</p>
+   <div class="range-wrap">
+   <input type="range" min="0" max="0.9" value="0.10" step="0.1" class="range" id="volume"> 
+   <output class="bubble"></output>
+</div>
+
+  
                 <tone-step-sequencer></tone-step-sequencer>
                 <pre></pre><br>
                 <pre1></pre1><br>
