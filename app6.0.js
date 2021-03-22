@@ -1,7 +1,25 @@
+// This version is based upon Anders' pseudocode
+
+
 // This code has an interface for uploading images, downscale them to  a 16x16 pixels image,
 // and then extract the RGB values from all pixels. The RGB values are then mapped to a 
 // frequencies played by a synth through a sequencer.
 // The three RGB nots are mapped to one synth each, and plays a harmony through the 16 beat sequence
+
+function clamp(min, max, val) {
+    return Math.min(Math.max(min, +val), max);
+  }
+//Scaling any incoming number
+function generateScaleFunction(prevMin, prevMax, newMin, newMax) {
+    var offset = newMin - prevMin,
+        scale = (newMax - newMin) / (prevMax - prevMin);
+    return function (x) {
+        return offset + scale * x;
+        };
+    };
+
+let normalize = generateScaleFunction(-1, 1, 0, 1);   
+
 
 // Sequencer code:
 
@@ -21,17 +39,29 @@ document.querySelector("tone-play-toggle").addEventListener("stop", () => Tone.T
 document.querySelector("tone-slider").addEventListener("input", (e) => Tone.Transport.bpm.value = parseFloat(e.target.value));
 document.querySelector("tone-step-sequencer").addEventListener("trigger", ({ detail }) => {
     keys.player(detail.row).start(detail.time, 0, "16t");
+    
 });
 
 ////////
-const synth = new Tone.FMSynth().toMaster();
-const synth2 = new Tone.FMSynth().toMaster();
-const synth3 = new Tone.FMSynth().toMaster();
-const synth4 = new Tone.FMSynth().toMaster();
-const synth5 = new Tone.Synth().toMaster();
-const synth6 = new Tone.Synth().toMaster();
-const synth7 = new Tone.Synth().toMaster();
-const synth8 = new Tone.Synth().toMaster();
+
+
+
+
+const autoFilter = new Tone.AutoFilter("4n").toMaster();
+autoFilter.type = "square3";
+let gainNode = new Tone.Gain().connect(autoFilter);
+
+
+gainNode.gain.value = 0.5;
+
+const synth = new Tone.FMSynth().connect(gainNode);
+const synth2 = new Tone.FMSynth().connect(gainNode);
+const synth3 = new Tone.FMSynth().connect(gainNode);
+const synth4 = new Tone.FMSynth().connect(gainNode);
+const synth5 = new Tone.FMSynth().toMaster();
+const synth6 = new Tone.FMSynth().toMaster();
+const synth7 = new Tone.FMSynth().toMaster();
+const synth8 = new Tone.FMSynth().toMaster();
 const synth9 = new Tone.AMSynth().toMaster();
 const synth10 = new Tone.AMSynth().toMaster();
 const synth11 = new Tone.AMSynth().toMaster();
@@ -40,6 +70,8 @@ const synth13 = new Tone.AMSynth().toMaster();
 const synth14 = new Tone.AMSynth().toMaster();
 const synth15 = new Tone.AMSynth().toMaster();
 const synth16 = new Tone.AMSynth().toMaster();
+
+
 
 let brightness = [];
 let brightness2 = [];
@@ -144,7 +176,10 @@ function getPixels(imgData) {
     var bValues = [];
     var highest = [];
     var lowest = [];
-
+    let row1 = [];
+    let row2 = [];
+    let row3 = []; // brightness
+    let warmColours = [];
 
     for (var i = 0; i < imgData.data.length; i += 4) {
         //msg += "\npixel red " + count + ": " + imgData.data[i];
@@ -155,6 +190,15 @@ function getPixels(imgData) {
         gValues += Math.floor(imgData.data[i+1]/2) + " ";
         bValues += Math.floor(imgData.data[i+2]/2) + " ";
 
+       
+
+        row1 += Math.floor((imgData.data[i]*0.299) + (imgData.data[i+1]*0.587) + (imgData.data[i+2]*0.114) * 0.5) + " ";
+        row2 += Math.floor((imgData.data[i]*0.299) + (imgData.data[i+1]*0.587) + (imgData.data[i+2]*0.114) * -0.5) + " ";
+        row3 += (((imgData.data[i]) + (imgData.data[i+1]) + (imgData.data[i+2])) / 765 ) * 0.9 + " ";
+
+
+        warmColours += normalize((imgData.data[i] - imgData.data[i+2]) / 255) + " ";
+        warmColours += (clamp(0, 1, warmColours));
 
 // Getting brightness values of pixels:
         highest = Math.max((imgData.data[i]), (imgData.data[i+1]), (imgData.data[i+2]) );
@@ -165,9 +209,68 @@ function getPixels(imgData) {
         count++;  
     }   
 
+    // processing warmColours
+//console.log(warmColours);
+warmColours = warmColours.split(" ");
+warmColours.pop();
+let warmColours1 = sliceAndMultiply(0, warmColours);
+console.log(warmColours1);
+// scaling the number
+
+let warmColours2 = sliceAndMultiply(1, warmColours);
+let warmColours3 = sliceAndMultiply(2, warmColours);
+let warmColours4 = sliceAndMultiply(3, warmColours);
+let warmColours5 = sliceAndMultiply(4, warmColours);
+let warmColours6 = sliceAndMultiply(5, warmColours);
+
 // converting brightnessvalue to array:
 brightness = brightness.split(" ");
 brightness.pop();
+
+//converting rValues to array:
+rValues = rValues.split(" ");
+rValues.pop();
+
+
+
+// SYNTHESIZE img 
+//if (scaledHeight === 1)
+/// ROW 1
+row1 = row1.split(" ");
+row1.pop();
+console.log(row1);
+//tar bare den øverste linja
+row1 = sliceAndMultiply(0, row1);
+console.log(row1);
+//konverterer til freqency
+row1 = arrayToFreq(row1);
+console.log(row1);
+
+// ROW2 
+row2 = row2.split(" ");
+row2.pop();
+console.log(row2);
+//tar bare den øverste linja
+row2 = sliceAndMultiply(0, row2);
+console.log(row2);
+//konverterer til freqency
+row2 = arrayToFreq(row2);
+console.log(row2);
+
+// ROW3 
+console.log(row3);
+row3 = row3.split(" ");
+row3.pop();
+console.log(row3);
+//tar bare den øverste linja
+row3 = sliceAndMultiply(2, row3);
+console.log(row3);
+//konverterer til freqency
+
+
+
+
+
 
 // Function that converts midi value to frequency:    
 function arrayToFreq(array) {
@@ -232,7 +335,6 @@ brightness15 = sliceAndMultiply(14, brightness);
 brightness16 = sliceAndMultiply(15, brightness);
 
 
-
 brightness1 = onOffValues(brightness1, 72);
 brightness2 = onOffValues(brightness2, 71);
 brightness3 = onOffValues(brightness3, 69);
@@ -292,17 +394,43 @@ bValues.pop();
 bValues = arrayToFreq(bValues);
      */
 
+/* let counter = 0;
+let counterArray= [];
+while (counter <= 15) {
+    counter = counter + 1;
+    counterArray.push(counter);
+}
+console.log(counterArray); */
+
 const seq = new Tone.Sequence((time, note) => {
     synth.triggerAttackRelease(note, sustain, time);
 
+var time2 = time * 4;
+console.log(time2);
+
+var i = Math.floor(time2 % row3.length);
+
+//if (i > row1.length) i = 0;
+
+
+console.log(time);
+console.log(i);
+gainNode.gain.rampTo(row3[i], 0.2);
+autoFilter.wet.value = warmColours1[i];
+//gainNode.gain.value = row3[i];
+console.log(autoFilter.wet.value);
+console.log(gainNode.gain.value);
+
+
     // subdivisions are given as subarrays
-}, brightness1).start(0);
+}, row1).start(0);
 
 const seq2 = new Tone.Sequence((time, note) => {
     synth2.triggerAttackRelease(note, sustain, time);
 
+
     // subdivisions are given as subarrays
-}, brightness2).start(0);
+}, row2).start(0);
 
 const seq3 = new Tone.Sequence((time, note) => {
     synth3.triggerAttackRelease(note, sustain, time);

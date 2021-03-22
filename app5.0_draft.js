@@ -22,6 +22,7 @@ document.querySelector("tone-slider").addEventListener("input", (e) => Tone.Tran
 document.querySelector("tone-step-sequencer").addEventListener("trigger", ({ detail }) => {
     keys.player(detail.row).start(detail.time, 0, "16t");
 });
+///////
 
 ////////
 const synth = new Tone.FMSynth().toMaster();
@@ -192,7 +193,7 @@ function getPixels(imgData) {
 
 
     // brightness value determines note on/off.
-   
+/*    
 let rValuesLine1; 
 let rValuesLine2; 
 let rValuesLine3; 
@@ -208,7 +209,7 @@ let rValuesLine12;
 let rValuesLine13; 
 let rValuesLine14; 
 let rValuesLine15; 
-let rValuesLine16;  
+let rValuesLine16;   */
 
 function onOffValues(array, midivalue) {
     var onOffValue = [];
